@@ -1,3 +1,4 @@
 .idea
 front/node_modules
+front/dist
 back/vendor
