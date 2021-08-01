@@ -1,16 +1,33 @@
 import { Category, Response } from '../types'
-import http from '../http'
+import http, { CreateParams, createParams } from '../http'
+
+function createCategoryParams(categoryParams: CreateParams) {
+  return createParams({
+    controller: 'category',
+    ...categoryParams,
+  })
+}
 
 export function getCategories(): Promise<Response<Category[]>> {
-  return http.get('/?controller=category&method=get')
+  const params = createCategoryParams({ action: 'get' })
+  return http.get('/', { params }).then((response) => response.data)
 }
 
 export function createCategory(
   category: Category
 ): Promise<Response<Category>> {
-  return http.post('/?controller=category&method=create', category)
+  const params = createCategoryParams({ action: 'create' })
+  return http
+    .post('/?controller=category&method=create', category, { params })
+    .then((response) => response.data)
 }
 
 export function deleteCategory(categoryId: number): Promise<Response<[]>> {
-  return http.delete('?controller=category&method=delete', categoryId)
+  const params = createCategoryParams({ action: 'delete' })
+  return http
+    .delete('?controller=category&method=delete', {
+      data: categoryId,
+      params,
+    })
+    .then((response) => response.data)
 }

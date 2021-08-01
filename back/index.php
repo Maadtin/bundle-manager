@@ -1,14 +1,22 @@
 <?php
 
 header('Access-Control-Allow-Origin: http://localhost:3000');
-header('Access-Control-Allow-Methods: POST, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');
+header("Access-Control-Allow-Methods: HEAD, GET, POST, PUT, PATCH, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization");
+header('Content-Type: application/json');
+
+if ($_SERVER['REQUEST_METHOD'] == "OPTIONS") {
+    header('Access-Control-Allow-Origin: *');
+    header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization");
+    header("HTTP/1.1 200 OK");
+    die();
+}
 
 require './vendor/autoload.php';
 
 $controller = $_GET['controller'];
 $requestMethod = $_SERVER['REQUEST_METHOD'];
-$method = $_GET['method'];
+$action = $_GET['action'];
 
 function getRequestData()
 {
@@ -16,14 +24,16 @@ function getRequestData()
         case 'POST':
         case 'DELETE':
             return json_decode(file_get_contents('php://input'), true);
+        case 'GET':
+            return $_GET;
         default:
             return null;
     }
 }
 
-function processRequest($controller, $method, $data)
+function processRequest($controller, $action, $data)
 {
-    if (!$controller && !$method) {
+    if (!$controller && !$action) {
         return json_encode([
             'data' => [],
             'status' => 'error',
@@ -34,12 +44,13 @@ function processRequest($controller, $method, $data)
     $controllerName = "Tappx\\Controllers\\" . ucfirst($controller) . 'Controller';
     $instance = new $controllerName;
 
-    $payload = $instance->$method($data);
+    $payload = $instance->$action($data);
 
     http_response_code($payload['code']);
 
     if ($payload['status'] === 'error') {
         return json_encode([
+            'status_code' => $payload['code'],
             'data' => $payload['data'],
             'status' => 'error',
             'message' => $payload['message']
@@ -47,6 +58,7 @@ function processRequest($controller, $method, $data)
     }
 
     return json_encode([
+        'status_code' => $payload['code'],
         'data' => $payload['data'],
         'status' => $payload['status'],
         'message' => $payload['message']
@@ -58,7 +70,7 @@ function processRequest($controller, $method, $data)
 
 $data = getRequestData();
 
-$response = processRequest($controller, $method, $data);
+$response = processRequest($controller, $action, $data);
 
 echo $response;
 

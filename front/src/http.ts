@@ -1,29 +1,32 @@
-const API_URL = 'http://tappx-prueba-tecnica.local'
+import axios from 'axios'
 
-type RequestParams = { [key: string]: string }
-
-const http = {
-  get(url: string, params?: RequestParams) {
-    const urlSearchParams = new URLSearchParams()
-    if (params) {
-      Object.keys(params).forEach((key) => {
-        urlSearchParams.set(key, params[key])
-      })
-    }
-    return fetch(API_URL + url).then((res) => res.json())
-  },
-  post<DataT>(url: string, data: DataT) {
-    return fetch(API_URL + url, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }).then((res) => res.json())
-  },
-  delete<DataT>(url: string, data: DataT) {
-    return fetch(API_URL + url, {
-      method: 'DELETE',
-      body: JSON.stringify(data),
-    }).then((res) => res.json())
-  },
+export interface CreateParams {
+  controller?: string
+  action: string
+  extraParams?: { [key: string]: string }
 }
+
+export function createParams({
+  controller = '',
+  action = '',
+  extraParams = {},
+}: CreateParams) {
+  const params: { [key: string]: string } = {}
+  Object.keys(extraParams).forEach((key) => {
+    if (extraParams[key]) {
+      params[key] = extraParams[key]
+    }
+  })
+
+  return {
+    controller,
+    action,
+    ...params,
+  }
+}
+
+const http = axios.create({
+  baseURL: 'http://tappx-prueba-tecnica.local',
+})
 
 export default http

@@ -6,6 +6,7 @@ export interface Bundle {
   email: string
   active: boolean
   category: number | undefined
+  categoryName: string | undefined
 }
 
 export interface Category {

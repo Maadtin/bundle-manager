@@ -5,9 +5,18 @@ namespace Tappx\Controllers;
 class BundleController extends Controller
 {
 
-    public function get()
+    public function get($params)
     {
-        $result = $this->connection->query('SELECT * FROM bundles');
+
+        $text = $_GET['text'] ?? '';
+
+        $query = 'SELECT b.*, c.name as category_name  FROM bundles b LEFT JOIN categories c on b.category = c.id';
+
+        if ($text) {
+            $query .= ' WHERE MATCH (b.name, b.bundle, b.company, b.email) AGAINST ("*'.$text.'*" IN BOOLEAN MODE)';
+        }
+
+        $result = $this->connection->query($query);
 
         if ($result) {
             $parsedData = array_map(function ($bundle) {
@@ -18,7 +27,8 @@ class BundleController extends Controller
                     'company' => $bundle['company'],
                     'email' => $bundle['email'],
                     'active' => $bundle['active'] === '1',
-                    'category' => (int)$bundle['category']
+                    'category' => (int)$bundle['category'],
+                    'categoryName' => $bundle['category_name']
                 ];
             }, $result->fetchAll());
 

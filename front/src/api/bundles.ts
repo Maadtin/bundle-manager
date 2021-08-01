@@ -1,14 +1,34 @@
+import { AxiosResponse } from 'axios'
 import { Bundle, Response } from '../types'
-import http from '../http'
+import http, { CreateParams, createParams } from '../http'
 
-export function getBundles(): Promise<Response<Bundle[]>> {
-  return http.get('/?controller=bundle&method=get')
+function createBundleParams(bundleParams: CreateParams) {
+  return createParams({
+    controller: 'bundle',
+    ...bundleParams,
+  })
+}
+
+export function getBundles({ text = '' } = {}): Promise<Response<Bundle[]>> {
+  const params = createBundleParams({ action: 'get', extraParams: { text } })
+  return http
+    .get('/', { params })
+    .then((response: AxiosResponse<Response<Bundle[]>>) => response.data)
 }
 
 export function createBundle(bundle: Bundle): Promise<Response<Bundle>> {
-  return http.post('/?controller=bundle&method=create', bundle)
+  const params = createBundleParams({ action: 'create' })
+  return http
+    .post('/', bundle, { params })
+    .then((response: AxiosResponse<Response<Bundle>>) => response.data)
 }
 
 export function deleteBundle(bundleId: number): Promise<Response<[]>> {
-  return http.delete('?controller=bundle&method=delete', bundleId)
+  const params = createBundleParams({ action: 'delete' })
+  return http
+    .delete('/', {
+      data: bundleId,
+      params,
+    })
+    .then((response: AxiosResponse<Response<[]>>) => response.data)
 }

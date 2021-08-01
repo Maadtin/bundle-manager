@@ -24,6 +24,7 @@ const initialValues: Bundle = {
   email: '',
   active: false,
   category: undefined,
+  categoryName: '',
 }
 
 function CreateBundleForm({
