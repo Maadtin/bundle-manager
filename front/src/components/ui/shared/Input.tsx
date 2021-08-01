@@ -11,5 +11,8 @@ const Input = styled(Box.withComponent('input'))<InputProps>`
   &:not([type='checkbox']) {
     width: 100%;
   }
+  &[type='search'] {
+    -webkit-appearance: none;
+  }
 `
 export default Input
