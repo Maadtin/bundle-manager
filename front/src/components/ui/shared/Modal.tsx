@@ -18,8 +18,11 @@ const ModalOverlay = styled(Box)`
   display: flex;
 `
 
-const ModalContent = styled(Box)`
+const ModalContent = styled(Box)<{ maxWidth?: string }>`
+  width: 100%;
   margin: auto;
+  max-width: 500px;
+  padding: 1em;
 `
 
 const ModalBody = styled(Box)`

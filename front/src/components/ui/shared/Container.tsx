@@ -6,7 +6,8 @@ interface ContainerProps {
 }
 
 const Container = styled(Box)<ContainerProps>`
-  margin: 0 auto;
+  margin-left: auto;
+  margin-right: auto;
   max-width: ${(props) => props.maxWidth || '1200px'};
   padding: 1em;
 `

@@ -8,5 +8,8 @@ const Input = styled(Box.withComponent('input'))<InputProps>`
   border-radius: 3px;
   padding: 0.5em 1em;
   font-size: inherit;
+  &:not([type='checkbox']) {
+    width: 100%;
+  }
 `
 export default Input

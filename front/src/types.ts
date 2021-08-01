@@ -1,9 +1,20 @@
 export interface Bundle {
+  id: number
   name: string
   bundle: string
+  company: string
   email: string
   active: boolean
-  category: Category
+  category: number | undefined
 }
 
-export type Category = 'Tool' | 'Music' | 'Game' | 'Social'
+export interface Category {
+  id?: number
+  name: string
+}
+
+export interface Response<Resource> {
+  data: Resource
+  status: 'error' | 'ok'
+  message: string
+}

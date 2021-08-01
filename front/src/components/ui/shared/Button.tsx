@@ -12,6 +12,10 @@ const Button = styled(Box)<ButtonProps>`
   border: 0;
   font-size: inherit;
   cursor: pointer;
+  transition: transform ease-in 0.1s;
+  &:hover {
+    transform: translate3d(0, -2px, 0);
+  }
   &:active {
     opacity: 0.5;
   }

@@ -10,5 +10,13 @@
     }
   ],
   "require": {
+    "ext-json": "*",
+    "ext-pdo": "*",
+    "ext-http": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Tappx\\": "src/"
+    }
   }
 }
