@@ -2,3 +2,5 @@
 front/node_modules
 front/dist
 back/vendor
+back/.env
+front/.env
