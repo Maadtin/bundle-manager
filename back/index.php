@@ -14,63 +14,68 @@ if ($_SERVER['REQUEST_METHOD'] == "OPTIONS") {
 
 require './vendor/autoload.php';
 
-$controller = $_GET['controller'];
-$requestMethod = $_SERVER['REQUEST_METHOD'];
-$action = $_GET['action'];
+if (isset($_GET['controller']) && isset($_GET['action'])) {
+    $controller = $_GET['controller'];
+    $requestMethod = $_SERVER['REQUEST_METHOD'];
+    $action = $_GET['action'];
 
-function getRequestData()
-{
-    switch ($_SERVER['REQUEST_METHOD']) {
-        case 'POST':
-        case 'DELETE':
-            return json_decode(file_get_contents('php://input'), true);
-        case 'GET':
-            return $_GET;
-        default:
-            return null;
-    }
-}
-
-function processRequest($controller, $action, $data)
-{
-    if (!$controller && !$action) {
-        return json_encode([
-            'data' => [],
-            'status' => 'error',
-            'message' => 'Route not found'
-        ]);
+    function getRequestData()
+    {
+        switch ($_SERVER['REQUEST_METHOD']) {
+            case 'POST':
+            case 'DELETE':
+                return json_decode(file_get_contents('php://input'), true);
+            case 'GET':
+                return $_GET;
+            default:
+                return null;
+        }
     }
 
-    $controllerName = "Tappx\\Controllers\\" . ucfirst($controller) . 'Controller';
-    $instance = new $controllerName;
+    function processRequest($controller, $action, $data)
+    {
+        if (!$controller && !$action) {
+            return json_encode([
+                'data' => [],
+                'status' => 'error',
+                'message' => 'Route not found'
+            ]);
+        }
 
-    $payload = $instance->$action($data);
+        $controllerName = "Tappx\\Controllers\\" . ucfirst($controller) . 'Controller';
+        $instance = new $controllerName;
 
-    http_response_code($payload['code']);
+        $payload = $instance->$action($data);
 
-    if ($payload['status'] === 'error') {
+        http_response_code($payload['code']);
+
+        if ($payload['status'] === 'error') {
+            return json_encode([
+                'status_code' => $payload['code'],
+                'data' => $payload['data'],
+                'status' => 'error',
+                'message' => $payload['message']
+            ]);
+        }
+
         return json_encode([
             'status_code' => $payload['code'],
             'data' => $payload['data'],
-            'status' => 'error',
+            'status' => $payload['status'],
             'message' => $payload['message']
         ]);
+
+
     }
 
-    return json_encode([
-        'status_code' => $payload['code'],
-        'data' => $payload['data'],
-        'status' => $payload['status'],
-        'message' => $payload['message']
-    ]);
 
+    $data = getRequestData();
 
+    $response = processRequest($controller, $action, $data);
+
+    echo $response;
+} else {
+    echo 'Silence is Golden';
 }
 
-
-$data = getRequestData();
-
-$response = processRequest($controller, $action, $data);
-
-echo $response;
 

@@ -26,7 +26,7 @@ export function createParams({
 }
 
 const http = axios.create({
-  baseURL: 'http://tappx-prueba-tecnica.local',
+  baseURL: import.meta.env.VITE_API_URL,
 })
 
 export default http
