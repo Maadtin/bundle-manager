@@ -1,3 +1,5 @@
+## [Demo](https://tappx.martindv.com) of the app
+
 ## Required stack:
 
 - NodeJS >= 14
